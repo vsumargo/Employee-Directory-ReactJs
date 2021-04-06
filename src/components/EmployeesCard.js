@@ -1,6 +1,6 @@
 function EmployeesCard (props) {
     return(
-        <div className="card col-3">
+        <div className="card col-6 col-md-4 col-lg-3">
             <span index={props.index} onClick={props.handleDeleteBtn}>X</span>
             <img className="card-img-top" src={props.picture} alt={`${props.firstname} ${props.lastname} profile pic`} />
             <div className="card-body"> 

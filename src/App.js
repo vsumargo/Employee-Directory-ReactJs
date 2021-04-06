@@ -1,5 +1,6 @@
 import React, {useState , useEffect} from "react";
-import EmployeesCardContainer from './components/EmpoyeesCardContainer.js'
+import EmployeesCardContainer from './components/EmpoyeesCardContainer.js';
+import Searchtools from './components/Searchtools'
 
 function App (){
     // const [gender, setGender] = useState([]);
@@ -8,13 +9,17 @@ function App (){
     // const [email, setEmail] = useState([]);
     // const [age, setAge] = useState([]);
 
-    const [employees, setEmployees] = useState([]);
+    const [employeesDatabase, setEmployeesDatabase] = useState([]);
     const [sort, setSort] = useState('');
+    const [displayEmployees, setDisplayEmployees] = useState([])
 
     useEffect(() => {
         fetch("https://randomuser.me/api/?results=8")
         .then( resp => resp.json())
-        .then( ({results}) => setEmployees(results))
+        .then( ({results}) => {
+            setEmployeesDatabase(results);
+            setDisplayEmployees(results);
+        })
         .catch( err => console.log(err));
     }, []);
 
@@ -23,7 +28,7 @@ function App (){
         console.log(sortMethod);
         switch (sortMethod){
             case 'nameAsc':
-                const sortedNameAsc = employees.slice().sort((a,b) => {
+                const sortedNameAsc = displayEmployees.slice().sort((a,b) => {
                     const objA = a.name.first.toLowerCase();
                     const objB = b.name.first.toLowerCase();
                     
@@ -36,11 +41,11 @@ function App (){
                     }
                 })
                 console.log(sortedNameAsc);
-                setEmployees(sortedNameAsc);
+                setDisplayEmployees(sortedNameAsc);
                 setSort(sortMethod);
                 break;
             case 'nameDesc' :
-                const sortedNameDesc = employees.slice().sort((a,b) => {
+                const sortedNameDesc = displayEmployees.slice().sort((a,b) => {
                     const objA = a.name.first.toLowerCase();
                     const objB = b.name.first.toLowerCase();
                     
@@ -53,11 +58,11 @@ function App (){
                     }
                 })
                 console.log(sortedNameDesc);
-                setEmployees(sortedNameDesc);
+                setDisplayEmployees(sortedNameDesc);
                 setSort(sortMethod);
                 break;
             case 'oldest':
-                const sortedOldest = employees.slice().sort((a,b) => {
+                const sortedOldest = displayEmployees.slice().sort((a,b) => {
                     const objA = a.dob.age;
                     const objB = b.dob.age;
                     
@@ -70,12 +75,11 @@ function App (){
                     }
                 })
                 console.log(sortedOldest);
-                setEmployees(sortedOldest);
+                setDisplayEmployees(sortedOldest);
                 setSort(sortMethod);
                 break;
             default:
                 console.log('error');
-
         }
 
     }
@@ -83,17 +87,35 @@ function App (){
     function handleDeleteBtn (event) {
         const index = event.target.getAttribute('index');
         console.log(index);
-        const updatedEmployeesArray = employees.slice();
+        const updatedEmployeesArray = employeesDatabase.slice();
         updatedEmployeesArray.splice(index,1);
-        setEmployees(updatedEmployeesArray);
+        setEmployeesDatabase(updatedEmployeesArray);
+    }
+
+    function handleSearchTools (event) {
+        const filterBy = event.target.name;
+        // console.log(filterBy);
+        const filterValue = event.target.value.toLowerCase();
+        // console.log(filterValue);
+        const filterLength = filterValue.length;
+        // console.log(filterLength);
+    
+        const newDisplayEmployees = employeesDatabase.filter( employee => {
+            const word = employee.name[filterBy].toLowerCase();
+            // console.log(word)
+            const slicedWord = word.slice(0,filterLength);
+            return ( slicedWord === filterValue && employee)
+        })
+
+        setDisplayEmployees(newDisplayEmployees);
     }
 
     return (
         <div className="App container">
-            {/* <Searchtools /> */}
+            <Searchtools handleSearchTools={handleSearchTools} />
             <EmployeesCardContainer 
                 sortvalue={sort}
-                employees={employees}
+                employees={displayEmployees}
                 handleSortChange={handleSortChange}
                 handleDeleteBtn={handleDeleteBtn}
             />
