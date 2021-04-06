@@ -1,6 +1,5 @@
 import React, {useState , useEffect} from "react";
-import EmployeesCard from './components/EmployeesCard.js'
-import Sort from './components/Sort.js'
+import EmployeesCardContainer from './components/EmpoyeesCardContainer.js'
 
 function App (){
     // const [gender, setGender] = useState([]);
@@ -18,24 +17,6 @@ function App (){
         .then( ({results}) => setEmployees(results))
         .catch( err => console.log(err));
     }, []);
-
-    function populateCards () {
-        let employeesCard = employees.map( ({gender, name: {first,last}, email, dob:{age}, picture},index) => {
-            return (
-                <EmployeesCard 
-                    key={index}
-                    index={index}
-                    gender={gender}
-                    firstname={first}
-                    lastname={last}
-                    email={email}
-                    age={age}
-                    picture={picture.large}
-                />
-            )
-        })
-        return employeesCard;
-    }
 
     function handleSortChange (event) {
         const sortMethod = event.target.value;
@@ -99,16 +80,23 @@ function App (){
 
     }
 
+    function handleDeleteBtn (event) {
+        const index = event.target.getAttribute('index');
+        console.log(index);
+        const updatedEmployeesArray = employees.slice();
+        updatedEmployeesArray.splice(index,1);
+        setEmployees(updatedEmployeesArray);
+    }
+
     return (
         <div className="App container">
             {/* <Searchtools /> */}
-            {/* <EmployeesCardContainer > */}
-                <Sort value={sort} handleSortChange={handleSortChange} />
-                <div className="row">
-                    {populateCards()}
-                </div>
-                
-            {/* </EmployeesCardContainer> */}
+            <EmployeesCardContainer 
+                sortvalue={sort}
+                employees={employees}
+                handleSortChange={handleSortChange}
+                handleDeleteBtn={handleDeleteBtn}
+            />
         </div>
         
     )
