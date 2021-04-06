@@ -7,7 +7,6 @@ function EmployeesCardContainer (props) {
             return (
                 <EmployeesCard 
                     key={index}
-                    index={index}
                     gender={gender}
                     firstname={first}
                     lastname={last}

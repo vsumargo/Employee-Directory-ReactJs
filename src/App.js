@@ -11,17 +11,21 @@ function App (){
 
     const [employeesDatabase, setEmployeesDatabase] = useState([]);
     const [sort, setSort] = useState('');
-    const [displayEmployees, setDisplayEmployees] = useState([])
+    const [displayEmployees, setDisplayEmployees] = useState([]);
 
     useEffect(() => {
         fetch("https://randomuser.me/api/?results=8")
         .then( resp => resp.json())
         .then( ({results}) => {
             setEmployeesDatabase(results);
-            setDisplayEmployees(results);
+            // setDisplayEmployees(results);
         })
         .catch( err => console.log(err));
     }, []);
+
+    useEffect(() => {
+        setDisplayEmployees(employeesDatabase);
+    }, [employeesDatabase])
 
     function handleSortChange (event) {
         const sortMethod = event.target.value;
@@ -41,7 +45,7 @@ function App (){
                     }
                 })
                 console.log(sortedNameAsc);
-                setDisplayEmployees(sortedNameAsc);
+                setEmployeesDatabase(sortedNameAsc);
                 setSort(sortMethod);
                 break;
             case 'nameDesc' :
@@ -58,7 +62,7 @@ function App (){
                     }
                 })
                 console.log(sortedNameDesc);
-                setDisplayEmployees(sortedNameDesc);
+                setEmployeesDatabase(sortedNameDesc);
                 setSort(sortMethod);
                 break;
             case 'oldest':
@@ -75,7 +79,7 @@ function App (){
                     }
                 })
                 console.log(sortedOldest);
-                setDisplayEmployees(sortedOldest);
+                setEmployeesDatabase(sortedOldest);
                 setSort(sortMethod);
                 break;
             default:
@@ -85,10 +89,18 @@ function App (){
     }
 
     function handleDeleteBtn (event) {
-        const index = event.target.getAttribute('index');
-        console.log(index);
-        const updatedEmployeesArray = employeesDatabase.slice();
-        updatedEmployeesArray.splice(index,1);
+        const firstName = event.target.getAttribute('firstname');
+        // console.log(firstName);
+        const lastName = event.target.getAttribute('lastname');
+        // console.log(lastName);
+        const updatedEmployeesArray = employeesDatabase.filter( employee => {
+            return (
+                (firstName !== employee.name.first && lastName !== employee.name.last) && employee
+            )
+        });
+        // console.log(updatedEmployeesArray);
+        document.getElementById('firstNameSearchBar').value = '';
+        document.getElementById('lastNameSearchBar').value = '';
         setEmployeesDatabase(updatedEmployeesArray);
     }
 
