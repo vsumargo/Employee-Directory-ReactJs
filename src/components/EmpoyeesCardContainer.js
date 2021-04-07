@@ -21,7 +21,7 @@ function EmployeesCardContainer (props) {
     }
 
     return (
-        <div className="row">
+        <div className="row employeesContainer">
             <Sort 
             value={props.sortvalue} 
             handleSortChange={props.handleSortChange}   
