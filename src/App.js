@@ -20,8 +20,9 @@ function App (){
         fetch("https://randomuser.me/api/?results=20")
         .then( resp => resp.json())
         .then( ({results}) => {
+            console.log(`Employees Database Length: ${employeesDatabase.length}`);
             setEmployeesDatabase(results);
-            // setDisplayEmployees(results);
+            setDisplayEmployees(results);
         })
         .catch( err => console.log(err));
     }, []);
@@ -165,12 +166,15 @@ function App (){
     return (
         <div className="App container">
             <Searchtools handleSearchTools={handleSearchTools} />
-            <EmployeesCardContainer 
+            { employeesDatabase.length !== 0 && 
+                <EmployeesCardContainer 
                 sortvalue={sort}
                 employees={displayEmployees}
                 handleSortChange={handleSortChange}
                 handleDeleteBtn={handleDeleteBtn}
-            />
+                />
+            }
+            
         </div>
         
     )

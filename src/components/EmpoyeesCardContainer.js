@@ -2,6 +2,10 @@ import Sort from './Sort.js';
 import EmployeesCard from './EmployeesCard.js'
 
 function EmployeesCardContainer (props) {
+    if (props.employees === null){
+        return
+    }
+    
     function populateCards () {
         let employeesCard = props.employees.map( ({gender, name: {first,last}, email, dob:{age}, picture},index) => {
             return (
@@ -26,7 +30,7 @@ function EmployeesCardContainer (props) {
             value={props.sortvalue} 
             handleSortChange={props.handleSortChange}   
             />
-            {populateCards()}
+            { props.employees.length === 0 ? <div>No employee found matching the searched name</div> : populateCards()}
         </div>
     )
 }
