@@ -7,8 +7,7 @@ function Sort (props) {
             <option value="nameDesc">Z - A</option>
             <option value="oldest">Oldest-Youngest</option>
             </select>
-        </div>
-        
+        </div>  
     )
 }
 

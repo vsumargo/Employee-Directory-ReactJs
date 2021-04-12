@@ -1,6 +1,7 @@
 import React, {useState , useEffect} from "react";
 import EmployeesCardContainer from './components/EmpoyeesCardContainer.js';
-import Searchtools from './components/Searchtools'
+import Searchtools from './components/Searchtools';
+import useDebounce from './utils/useDebounce.js';
 
 function App (){
     // const [gender, setGender] = useState([]);
@@ -12,9 +13,11 @@ function App (){
     const [employeesDatabase, setEmployeesDatabase] = useState([]);
     const [sort, setSort] = useState('');
     const [displayEmployees, setDisplayEmployees] = useState([]);
+    const [searchFirstName , setSearchFirstName] = useState('');
+    const [searchLastName , setSearchLastName] = useState('');
 
     useEffect(() => {
-        fetch("https://randomuser.me/api/?results=8")
+        fetch("https://randomuser.me/api/?results=20")
         .then( resp => resp.json())
         .then( ({results}) => {
             setEmployeesDatabase(results);
@@ -23,8 +26,34 @@ function App (){
         .catch( err => console.log(err));
     }, []);
 
+    const searchName = searchFirstName + searchLastName;
+    const debounceTerms = useDebounce(searchName,500);
+
+    useEffect(() => {
+        if (debounceTerms === ''){
+            return setDisplayEmployees(employeesDatabase);
+        }
+        if (debounceTerms){
+            const newDisplayEmployees = employeesDatabase.filter( employee => {
+                const firstName = employee.name.first.toLowerCase();
+                const lastName = employee.name.last.toLowerCase();
+                // console.log(word)
+                const slicedFirstName = firstName.slice(0,searchFirstName.length);
+                const slicedLastName = lastName.slice(0,searchLastName.length);
+                if (slicedFirstName === searchFirstName && slicedLastName === searchLastName){
+                    return employee;
+                }
+                // return ( slicedFirstName === filterValue && employee)
+            })
+    
+            return setDisplayEmployees(newDisplayEmployees);
+        }
+    }, [debounceTerms]);
+
     useEffect(() => {
         setDisplayEmployees(employeesDatabase);
+        setSearchFirstName('');
+        setSearchLastName('');
     }, [employeesDatabase])
 
     function handleSortChange (event) {
@@ -109,17 +138,28 @@ function App (){
         // console.log(filterBy);
         const filterValue = event.target.value.toLowerCase();
         // console.log(filterValue);
-        const filterLength = filterValue.length;
-        // console.log(filterLength);
+        switch (filterBy){
+            case 'first':
+                setSearchFirstName(filterValue);
+                break;
+            case 'last':
+                setSearchLastName(filterValue);
+                break;
+            default:
+                setSearchLastName('');
+                setSearchFirstName('');
+        }
+        // const filterLength = filterValue.length;
+        // // console.log(filterLength);
     
-        const newDisplayEmployees = employeesDatabase.filter( employee => {
-            const word = employee.name[filterBy].toLowerCase();
-            // console.log(word)
-            const slicedWord = word.slice(0,filterLength);
-            return ( slicedWord === filterValue && employee)
-        })
+        // const newDisplayEmployees = employeesDatabase.filter( employee => {
+        //     const word = employee.name[filterBy].toLowerCase();
+        //     // console.log(word)
+        //     const slicedWord = word.slice(0,filterLength);
+        //     return ( slicedWord === filterValue && employee)
+        // })
 
-        setDisplayEmployees(newDisplayEmployees);
+        // setDisplayEmployees(newDisplayEmployees);
     }
 
     return (
